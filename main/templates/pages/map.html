@@ -1,0 +1,52 @@
+<html lang="en">
+    {% load static %}
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="A single marker example" />
+        <style>
+            html,
+            body,
+            #container {
+                margin: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container"></div>
+        <script type="text/javascript" src="https://mapgl.2gis.com/api/js/v1"></script>
+        <script src="{% static 'dataLoader.js' %}"></script>
+        <script>
+            const map = new mapgl.Map('container', {
+                center: [76,62],
+                zoom: 10,
+                key: 'bfd8bbca-8abf-11ea-b033-5fa57aae2de7',
+            });
+            const drawPolygon = (name, coordinates) => {
+                if (Array.isArray(coordinates[0][0])) {
+                    coordinates.forEach(coords => drawPolygon(name, coords))
+                } else {
+                    new mapgl.Polygon(map, {
+                        coordinates: [coordinates],
+                        color: '#ff00005',
+                        strokeWidth: 3,
+                        strokeColor: '#ffffff',
+                    });
+                }
+            }
+            const regions = data.features;
+            for (const region of regions) {
+                const name = region.properties['name:ru'];
+                const coordinates = region.geometry.coordinates;
+                drawPolygon(name, coordinates)
+            }
+            const control = new mapgl.Control(map, '<button>Тут будут разные параметры для выбора</button>', {
+                position: 'topLeft',
+            });
+
+        </script>
+    </body>
+</html>
